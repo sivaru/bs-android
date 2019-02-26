@@ -55,7 +55,6 @@ class LoginFragment : Fragment() {
     }
 
     fun onSuccess() {
-        showMessage ("LoginFragment Successful")
         val fragmentManager = getFragmentManager()
             ?.beginTransaction()
             ?.replace(R.id.frame, RestaurantsListFragment())
