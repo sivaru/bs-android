@@ -31,5 +31,5 @@ interface RestaurantsService {
     fun getRestaurants(): Call<ArrayList<Restaurant>>
 
     @GET("restaurants/{id}")
-    fun getRestaurant(@Path("id") id: Int): Call<Restaurant>
+    fun getRestaurant(@Path("id") id: String): Call<Restaurant>
 }
