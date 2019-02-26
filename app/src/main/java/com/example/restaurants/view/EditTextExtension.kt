@@ -1,4 +1,4 @@
-package com.example.restaurants
+package com.example.restaurants.view
 
 import android.text.Editable
 import android.text.TextWatcher

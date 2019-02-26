@@ -1,4 +1,4 @@
-package com.example.restaurants
+package com.example.restaurants.view
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -11,22 +11,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.leonardomadrigal.androidbasics.view.RestaurantsViewModelFactory
-import com.example.restaurants.models.Restaurant
+import com.example.restaurants.R
 import com.example.restaurants.models.RestaurantsAdapter
 import com.example.restaurants.models.RestaurantsViewModel
 import com.example.restaurants.remote.RestaurantsService
 import kotlinx.android.synthetic.main.fragment_restaurants_list.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.support.v4.uiThread
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-class RestaurantsList : Fragment() {
+class RestaurantsListFragment : Fragment() {
     private var adapter = RestaurantsAdapter {
         showId(it)
     }

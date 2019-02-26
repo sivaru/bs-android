@@ -2,6 +2,7 @@ package com.example.restaurants
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.example.restaurants.view.LoginFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -11,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         if(savedInstanceState == null){
             val fragmentManager = supportFragmentManager
                 .beginTransaction()
-                .add(R.id.frame, Login())
+                .add(R.id.frame, LoginFragment())
                 .commit()
         }
 

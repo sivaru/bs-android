@@ -1,4 +1,4 @@
-package com.example.restaurants
+package com.example.restaurants.view
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -7,19 +7,14 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.restaurants.R
 import com.example.restaurants.models.LoginViewModel
 import com.example.restaurants.models.LoginViewModelFactory
-import com.example.restaurants.models.User
 import com.example.restaurants.remote.LoginService
 import kotlinx.android.synthetic.main.fragment_login.*
-import org.jetbrains.anko.support.v4.uiThread
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
-
-class Login : Fragment() {
+class LoginFragment : Fragment() {
 
 
     private val lViewModel by lazy {
@@ -60,10 +55,10 @@ class Login : Fragment() {
     }
 
     fun onSuccess() {
-        showMessage ("Login Successful")
+        showMessage ("LoginFragment Successful")
         val fragmentManager = getFragmentManager()
             ?.beginTransaction()
-            ?.replace(R.id.frame, RestaurantsList())
+            ?.replace(R.id.frame, RestaurantsListFragment())
             ?.commit()
     }
 
