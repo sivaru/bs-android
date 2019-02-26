@@ -49,6 +49,17 @@ class RestaurantsList : Fragment() {
                 restaurants -> adapter.update(restaurants)
             }
         })
+
+        rViewModel.isLoading.observe(this, Observer {
+            it?.let{
+              if(it){
+                  loading.visibility = View.VISIBLE
+              } else {
+                  loading.visibility = View.GONE
+              }
+
+            }
+        })
     }
 
     override fun onCreateView(
@@ -72,29 +83,6 @@ class RestaurantsList : Fragment() {
 
     fun showId(id:String){
         Toast.makeText(getActivity(),id,Toast.LENGTH_SHORT).show();
-    }
-
-    fun getRestaurants() {
-        loading.visibility = View.VISIBLE
-        RestaurantsService.instance.getRestaurants().enqueue(object : Callback<ArrayList<Restaurant>> {
-            override fun onResponse(call: Call<ArrayList<Restaurant>>, response: Response<ArrayList<Restaurant>>) {
-                when (response.isSuccessful) {
-                    true -> if (response.isSuccessful) {
-                        response.body()?.let {
-                            adapter.update(it)
-                            loading.visibility = View.GONE
-                        }
-                    }
-                    false -> println("Failure")
-                }
-            }
-
-            override fun onFailure(call: Call<ArrayList<Restaurant>>, t: Throwable) {
-                println("error")
-
-            }
-        })
-
     }
 
 }
