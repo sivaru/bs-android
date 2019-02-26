@@ -1,5 +1,7 @@
 package com.example.restaurants
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
@@ -7,8 +9,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.example.leonardomadrigal.androidbasics.view.RestaurantsViewModelFactory
 import com.example.restaurants.models.Restaurant
 import com.example.restaurants.models.RestaurantsAdapter
+import com.example.restaurants.models.RestaurantsViewModel
 import com.example.restaurants.remote.RestaurantsService
 import kotlinx.android.synthetic.main.fragment_restaurants_list.*
 import org.jetbrains.anko.doAsync
@@ -22,15 +27,28 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 class RestaurantsList : Fragment() {
-    private var adapter = RestaurantsAdapter()
+    private var adapter = RestaurantsAdapter {
+        showId(it)
+    }
+
+    private val rViewModel by lazy {
+        ViewModelProviders.of(this, RestaurantsViewModelFactory(RestaurantsService.instance))
+            .get(RestaurantsViewModel::class.java)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onStart() {
         super.onStart()
+        rViewModel.restaurants.observe(this, Observer {
+            it?.let{
+                restaurants -> adapter.update(restaurants)
+            }
+        })
     }
 
     override fun onCreateView(
@@ -46,32 +64,36 @@ class RestaurantsList : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        getRestaurants()
+
         restaurantsList.adapter = adapter
         restaurantsList.layoutManager = LinearLayoutManager(context)
         restaurantsList.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
     }
 
-    fun getRestaurants(){
-          RestaurantsService.instance.getRestaurants().enqueue(object : Callback<ArrayList<Restaurant>> {
-              override fun onResponse(call: Call<ArrayList<Restaurant>>, response: Response<ArrayList<Restaurant>>) {
-                      when (response.isSuccessful) {
-                          true -> if (response.isSuccessful) {
-                              response.body()?.let {
-                                  println("ya llego la madre")
-                                  adapter.update(it)
-                              }
-                          }
-                          false -> println("Failure")
-                      }
-                                }
+    fun showId(id:String){
+        Toast.makeText(getActivity(),id,Toast.LENGTH_SHORT).show();
+    }
 
-              override fun onFailure(call: Call<ArrayList<Restaurant>>, t: Throwable) {
+    fun getRestaurants() {
+        loading.visibility = View.VISIBLE
+        RestaurantsService.instance.getRestaurants().enqueue(object : Callback<ArrayList<Restaurant>> {
+            override fun onResponse(call: Call<ArrayList<Restaurant>>, response: Response<ArrayList<Restaurant>>) {
+                when (response.isSuccessful) {
+                    true -> if (response.isSuccessful) {
+                        response.body()?.let {
+                            adapter.update(it)
+                            loading.visibility = View.GONE
+                        }
+                    }
+                    false -> println("Failure")
+                }
+            }
 
-                      println("error")
+            override fun onFailure(call: Call<ArrayList<Restaurant>>, t: Throwable) {
+                println("error")
 
-              }
-          })
+            }
+        })
 
     }
 
