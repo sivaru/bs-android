@@ -36,12 +36,6 @@ class RestaurantsList : Fragment() {
             .get(RestaurantsViewModel::class.java)
     }
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onStart() {
         super.onStart()
         rViewModel.restaurants.observe(this, Observer {

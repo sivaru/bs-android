@@ -1,42 +1,30 @@
 package com.example.restaurants
 
-import android.content.Context
-import android.net.Uri
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.os.Message
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.restaurants.models.LoginViewModel
+import com.example.restaurants.models.LoginViewModelFactory
 import com.example.restaurants.models.User
 import com.example.restaurants.remote.LoginService
 import kotlinx.android.synthetic.main.fragment_login.*
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.support.v4.uiThread
-import org.jetbrains.anko.uiThread
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 
 class Login : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    private val lViewModel by lazy {
+        ViewModelProviders.of(this, LoginViewModelFactory(LoginService.instance))
+            .get(LoginViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -50,32 +38,25 @@ class Login : Fragment() {
     override fun onStart() {
         super.onStart()
         button3.setOnClickListener{
-            doLogin()
+           lViewModel.login()
         }
-    }
-    fun doLogin() {
-        sendLogin()
-    }
 
-    private fun sendLogin(){
-        val e = email.text.toString()
-        val p = password.text.toString()
-        LoginService.instance.login(User(e, p)).enqueue(object : Callback<Unit> {
-            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                uiThread {
-                    when (response.isSuccessful) {
-                        true -> onSuccess()
-                        false -> showMessage("Failure")
-                    }
-                }
-            }
+        email.afterTextChanged {
+            lViewModel.username = it
+        }
 
-            override fun onFailure(call: Call<Unit>, t: Throwable) {
-                uiThread {
-                    showMessage("error")
-                }
+        password.afterTextChanged {
+            lViewModel.password = it
+        }
+
+        lViewModel.isAuthenticated.observe(this, Observer {
+            it?.let{
+                   if(it) {
+                       onSuccess()
+                   }
             }
         })
+
     }
 
     fun onSuccess() {
