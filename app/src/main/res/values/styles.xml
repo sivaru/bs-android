@@ -8,4 +8,30 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="RestaurantListItem">
+        <item name="android:padding">@dimen/padding_small</item>
+?   </style>
+
+    <style name="title_1_black">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="title_1_gray">
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="body_gray">
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="body_black">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
 </resources>

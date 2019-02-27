@@ -1,6 +1,5 @@
 package com.example.restaurants.models
 
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.widget.RecyclerView
@@ -46,8 +45,7 @@ class RestaurantsAdapter(private var items: List<Restaurant> = emptyList(), priv
                     .into(itemView.picture)
 
             }
-            itemView.location.text = restaurant.location.toString()
-
+            itemView.location.text = restaurant.location.address
         }
     }
 }

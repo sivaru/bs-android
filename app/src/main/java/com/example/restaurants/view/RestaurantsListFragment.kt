@@ -23,7 +23,17 @@ private const val ARG_PARAM2 = "param2"
 
 class RestaurantsListFragment : Fragment() {
     private var adapter = RestaurantsAdapter {
-        showId(it)
+
+        val fragment = RestaurantDetailFragment()
+        val args = Bundle()
+        args.putString("id",it)
+        fragment.arguments = args
+
+        getFragmentManager()
+            ?.beginTransaction()
+            ?.replace(R.id.frame, fragment)
+            ?.addToBackStack(null)
+            ?.commit()
     }
 
     private val rViewModel by lazy {
@@ -56,10 +66,7 @@ class RestaurantsListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val fragment = inflater.inflate(R.layout.fragment_restaurants_list, container, false)
-
-
-        return fragment
+        return inflater.inflate(R.layout.fragment_restaurants_list, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -68,10 +75,6 @@ class RestaurantsListFragment : Fragment() {
         restaurantsList.adapter = adapter
         restaurantsList.layoutManager = LinearLayoutManager(context)
         restaurantsList.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
-    }
-
-    fun showId(id:String){
-        Toast.makeText(getActivity(),id,Toast.LENGTH_SHORT).show();
     }
 
 }
