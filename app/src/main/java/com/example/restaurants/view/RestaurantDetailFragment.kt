@@ -15,40 +15,38 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.leonardomadrigal.androidbasics.view.RestaurantsViewModelFactory
-
 import com.example.restaurants.R
+import com.example.restaurants.application.RestaurantDatabase
 import com.example.restaurants.models.Restaurant
 import com.example.restaurants.models.RestaurantsViewModel
 import com.example.restaurants.models.ReviewsAdapter
 import com.example.restaurants.remote.RestaurantsService
+import com.example.restaurants.viewmodel.RestaurantViewModel
+import com.example.restaurants.viewmodel.RestaurantViewModelFactory
 import kotlinx.android.synthetic.main.fragment_restaurant_detail.*
 
 
 class RestaurantDetailFragment : Fragment() {
     private val rViewModel by lazy {
-        ViewModelProviders.of(this, RestaurantsViewModelFactory(RestaurantsService.instance))
-            .get(RestaurantsViewModel::class.java)
+        ViewModelProviders.of(this, RestaurantViewModelFactory(RestaurantsService.instance, this.id!!))
+            .get(RestaurantViewModel::class.java)
     }
 
     private var id = ""
     private var isLoading = false
-    private var restaurant = Restaurant()
     private var adapter = ReviewsAdapter()
 
     override fun onStart() {
         super.onStart()
         arguments?.let {
             id = it.getString("id")
-            rViewModel.getRestaurant(id)
         }
         restaurant_reviews.adapter = adapter
         restaurant_reviews.layoutManager = LinearLayoutManager(context)
         restaurant_reviews.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
-        rViewModel.restaurant.observe(this, Observer {
+        rViewModel?.restaurant?.observe(this, Observer {
             it?.let {
-                restaurant = it
-                initialize()
+                initialize(it)
             }
         })
 
@@ -63,7 +61,7 @@ class RestaurantDetailFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_restaurant_detail, container, false)
     }
 
-    fun initialize() {
+    fun initialize(restaurant: Restaurant) {
         val options = RequestOptions()
             .placeholder(R.drawable.question_mark)
             .fallback(ColorDrawable(Color.GRAY))
@@ -77,6 +75,11 @@ class RestaurantDetailFragment : Fragment() {
         restaurant_title.text = restaurant.name
         restaurant_rating.rating = restaurant.overallRating
         restaurant_rating.setIsIndicator(true)
-        adapter.update(restaurant.reviews)
+        if (restaurant.reviews.isNotEmpty()) {
+            adapter.update(restaurant.reviews)
+        } else {
+            restaurant_rating.visibility = View.GONE
+            restaurant_no_review.visibility = View.VISIBLE
+        }
     }
 }

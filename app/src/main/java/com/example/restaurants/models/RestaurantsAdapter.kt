@@ -37,7 +37,7 @@ class RestaurantsAdapter(private var items: List<Restaurant> = emptyList(), priv
             restaurant.location.photos.firstOrNull()?.let {
                 val options = RequestOptions()
                     .placeholder(R.drawable.question_mark)
-                    .fallback(ColorDrawable(Color.GRAY))
+                    .fallback(R.drawable.question_mark)
 
                 Glide.with(itemView.context)
                     .load(it.url)

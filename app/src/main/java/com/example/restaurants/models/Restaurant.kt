@@ -1,8 +1,13 @@
 package com.example.restaurants.models
 
-data class Restaurant (val id: String = "",
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
+
+
+@Entity
+data class Restaurant (@PrimaryKey val id: String,
                        val name: String = "",
-                       val location: Location = Location(),
+                       val location: Location,
                        val url: String = "",
-                       val reviews: List<Review> = ArrayList(),
-                       val overallRating: Float = 0.00f)
+                       val reviews: List<Review>,
+                        val overallRating: Float)

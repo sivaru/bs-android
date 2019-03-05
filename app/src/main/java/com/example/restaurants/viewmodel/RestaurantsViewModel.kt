@@ -1,18 +1,24 @@
 package com.example.restaurants.models
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
+import com.example.restaurants.application.RestaurantDatabase
 import com.example.restaurants.remote.RestaurantsService
+import org.jetbrains.anko.doAsync
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.example.restaurants.models.Restaurant
 
-class RestaurantsViewModel(val service: RestaurantsService) : ViewModel() {
+class RestaurantsViewModel(val service: RestaurantsService, val db : RestaurantDatabase?) : ViewModel() {
 
-    val restaurants = MutableLiveData<ArrayList<Restaurant>>()
+    var restaurants: LiveData<List<Restaurant>>? = null
     val restaurant = MutableLiveData<Restaurant>()
     val errorMessage = MutableLiveData<String>()
     val isLoading = MutableLiveData<Boolean>()
+
 
     init {
         isLoading.postValue(true)
@@ -25,12 +31,20 @@ class RestaurantsViewModel(val service: RestaurantsService) : ViewModel() {
             override fun onResponse(call: Call<ArrayList<Restaurant>>, response: Response<ArrayList<Restaurant>>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        restaurants.postValue(it)
+
+                        doAsync{
+                            db?.getRestaurantDao()?.insert(it)
+                        }
                     }
                 }
                 isLoading.postValue(false)
+
             }
         })
+
+        restaurants = db?.getRestaurantDao()?.getAll()
+
+
     }
 
     fun getRestaurant(id: String) {
@@ -49,6 +63,7 @@ class RestaurantsViewModel(val service: RestaurantsService) : ViewModel() {
                 isLoading.postValue(false)
             }
         })
+
     }
 
 }

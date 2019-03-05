@@ -9,9 +9,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import com.example.leonardomadrigal.androidbasics.view.RestaurantsViewModelFactory
+import com.example.restaurants.viewmodel.RestaurantsViewModelFactory
 import com.example.restaurants.R
+import com.example.restaurants.application.RestaurantDatabase
 import com.example.restaurants.models.RestaurantsAdapter
 import com.example.restaurants.models.RestaurantsViewModel
 import com.example.restaurants.remote.RestaurantsService
@@ -37,19 +37,23 @@ class RestaurantsListFragment : Fragment() {
     }
 
     private val rViewModel by lazy {
-        ViewModelProviders.of(this, RestaurantsViewModelFactory(RestaurantsService.instance))
-            .get(RestaurantsViewModel::class.java)
+        context?.let{
+            ViewModelProviders.of(this, RestaurantsViewModelFactory(RestaurantsService.instance, RestaurantDatabase.getInstance(it)))
+                .get(RestaurantsViewModel::class.java)
+        }
+
+
     }
 
     override fun onStart() {
         super.onStart()
-        rViewModel.restaurants.observe(this, Observer {
+        rViewModel?.restaurants?.observe(this, Observer {
             it?.let{
                 restaurants -> adapter.update(restaurants)
             }
         })
 
-        rViewModel.isLoading.observe(this, Observer {
+        rViewModel?.isLoading?.observe(this, Observer {
             it?.let{
               if(it){
                   loading.visibility = View.VISIBLE
